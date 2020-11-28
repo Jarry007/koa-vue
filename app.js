@@ -4,7 +4,8 @@ const app = new koa()
 const cors = require('koa2-cors')
 const swagger = require('./util/swagger')
 const bodyParse = require('koa-bodyparser')
-
+const db = require('./app/models/db')
+const sql = require('./util/sql')
 
 app.use(cors({
     maxAge:10,
@@ -13,6 +14,7 @@ app.use(cors({
     allowHeaders: ['Content-Type', 'Authorization', 'Accept'], //设置服务器支持的所有头信息字段
     // exposeHeaders: ['WWW-Authenticate', 'Server-Authorization'] //设置获取其他自定义字段
 }))
+db.query(sql.creatUser,[])
 // app.use(cors())
 app.use(swagger.routes(),swagger.allowedMethods())
 app.use(koaSwagger.koaSwagger({

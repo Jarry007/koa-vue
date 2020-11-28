@@ -12,7 +12,7 @@ const pool = mysql.createPool({
 
 const db = {}
 
-db.query = ()=>{
+db.query = (sql,values)=>{
     return new Promise((resolve,reject)=>{
         pool.getConnection((err,connection)=>{
             if(err){
@@ -20,17 +20,19 @@ db.query = ()=>{
                 return
             }
 
-            connection.query('SELECT * FROM test',(error,result,fields)=>{
+            connection.query(sql,values,(error,result,fields)=>{
                 if(error){
                     reject(error)
                     return
                 }
-                console.log('ress',result)
+                // console.log('ress',result)
                 resolve(result)
+                connection.release()
             })
         })
     })
 }
+
 // console.log('pppp',pool)
 // pool.query('SELECT * FROM demo', (err, res, fields) => {
 //     return new Promise((resolve, reject) => {
