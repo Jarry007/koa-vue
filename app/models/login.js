@@ -1,4 +1,3 @@
-const { query } = require('./db')
 const db = require('./db')
 
 const login = async (user, pwd) => {
@@ -7,17 +6,20 @@ const login = async (user, pwd) => {
 }
 
 const register = async (user, pwd) => {
+   
    const _querySql = `select * from users where name = ?`
    const _query = await db.query(_querySql, [user])
 
    if (_query.length) {
-      throw new Error('已存在')
+      throw  Error('该账号已被注册')
    }
 
-   const _insertSql = `insert into users values(null,?,?)`
+   const _insertSql = `insert into users values(null,?,?,default)`
    return await db.query(_insertSql, [user, pwd])
 
 }
+
+
 module.exports = {
    login, register
 }

@@ -1,5 +1,6 @@
-const db = require('../models/db')
+// const db = require('../models/db')
 const _login = require('../models/login')
+const token = require('../token/token')
 
 const index = async (ctx) => {
     ctx.response.body = '首页'
@@ -9,9 +10,13 @@ const loginIt = async (ctx) => {
     const { username, password } = ctx.request.body
     try {
         const loginInfo = await _login.login(username, password)
+        // console.log('loginToken',loginInfo)
+        const _token = token.setToken(loginInfo[0])
+
         ctx.response.body = {
             code: 200,
-            message: '登录成功'
+            message: '登录成功',
+            data: _token
         }
     } catch (error) {
         ctx.response.body = {
@@ -37,7 +42,7 @@ const registerIt = async (ctx) => {
         console.log('err', error)
         ctx.response.body = {
             code: 500,
-            message: error || '错误'
+            message: error.message || '错误'
         }
     }
 
