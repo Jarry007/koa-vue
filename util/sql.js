@@ -18,12 +18,23 @@ const creatList = `create table if not exists list(
    says VARCHAR(140),
    PRIMARY KEY (ID),
    createtime DATETIME DEFAULT CURRENT_TIMESTAMP,
-   foreign key (user) references users(name)
+   foreign key (user) references users (name)
 ) DEFAULT CHARSET 'utf8';`.replace(/[\r\n]/g,'')
 
+
+const creatRelation = `create table if not exists relation(
+   id INT NOT NULL AUTO_INCREMENT,
+   userid INT,
+   agreeid INT,
+   PRIMARY KEY (id),
+   createtime DATETIME DEFAULT CURRENT_TIMESTAMP,
+   foreign key (userid) references users (id) on delete cascade on update cascade,
+   foreign key (agreeid) references list (id) on delete cascade on update cascade,
+   UNIQUE(userid,agreeid)
+)`
 
 // const create
 
 module.exports = {
-   creatUser,creatList
+   creatUser,creatList,creatRelation
 }
