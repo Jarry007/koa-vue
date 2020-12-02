@@ -35,7 +35,8 @@ const clearToken = async (ctx, next) => {
 const setToken = (user) => {
     return jwt.sign({
         user: user.name,
-        userid:user.id
+        userid:user.id,
+        uuid:user.uuid
     },
         secretKey,
         { expiresIn: '24h' }
@@ -44,7 +45,7 @@ const setToken = (user) => {
 
 const checkToken = async (ctx, next) => {
     const author = ctx.get('Authorization')
-    // console.log('at', author)
+    console.log('at', author)
     if (!author) {
         ctx.body = {
             code: '401',
