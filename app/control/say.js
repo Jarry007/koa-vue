@@ -1,90 +1,94 @@
-const say = require('../models/say')
 const relationBase = require('../models/useragree')
 const listBase = require('../models/list-database')
-
+const userBase = require('../models/user-database')
+// const { json } = require('sequelize/types')
 const requeSay = async (ctx) => {
-    const { uuid } = ctx.userInfo
+    const { userid } = ctx.userInfo
+    console.log(ctx.userInfo)
     const { says } = ctx.request.body
-    console.log(uuid,says)
+    // console.log(uuid, says)
     try {
-        const listB = new listBase()
-        listB.userid = uuid
-        listB.says = says
-        await listB.save()
-        ctx.response.body = {
+        const say =  await listBase.create({
+            says:says,
+            userId: userid
+        })
+        ctx.body = {
             code: 200,
             message: '成功'
         }
     } catch (error) {
-        ctx.response.body = {
+        ctx.body = {
             code: 500,
             message: error.message || '错误'
         }
     }
 }
-const sayIt = async (ctx) => {
-    const { user, says } = ctx.request.body
-    try {
-        await say.says(user, says)
-        ctx.response.body = {
-            code: 200,
-            message: '成功'
-        }
-    } catch (error) {
-        ctx.response.body = {
-            code: 500,
-            message: error || '错误'
-        }
-    }
-}
 
-const sayList = async (ctx) => {
-    // console.log('ctx', ctx.userInfo)
-    const { user } = ctx.userInfo
-
+const reSayList = async (ctx) => {
+    console.log(ctx)
+    // const { uuid } = ctx.userInfo
     try {
-        const list = await say.search(user)
-        ctx.response.body = {
+        const list = await listBase.findAll({
+            include:
+            {
+                model: userBase,
+                attributes: ['id', 'name']
+            }
+
+        })
+        const listCover = async (list) => {
+            for (let i = 0; i < list.length; i++) {
+                const getAgreeCount = await relationBase.count({
+                    where: { sayid: list[i].id }
+                })
+                list[i].setDataValue('count', getAgreeCount)
+            }
+            return list
+          
+        }
+       
+        
+        const result = list.length? await listCover(list):[]
+
+        ctx.body = {
             code: 200,
             message: '成功',
-            data: list
+            data: result
         }
+
     } catch (error) {
+        console.log('err', error.message)
         ctx.response.body = {
             code: 500,
             message: error || '错误'
         }
     }
 }
+
 
 const requeAgree = async (ctx) => {
     const { uuid } = ctx.userInfo
     let { sayid } = ctx.request.body
     try {
-        const hasAgreen = await relationBase.findOne({
+        const agree = await relationBase.findOne({
             where: {
                 userid: uuid,
                 sayid: sayid
             }
         })
 
-        if (hasAgreen) {
-            await relationBase.destroy({
-                where: {
-                    userid: uuid,
-                    sayid: sayid
-                }
-            })
+        if (agree) {
+            await agree.destroy()
             ctx.response.body = {
                 code: 200,
                 message: '取消成功'
             }
-
         } else {
-            const relationB = new relationBase()
-            relationB.userid = uuid
-            relationB.sayid = sayid
-            await relationB.save()
+            await relationBase.create({
+                userid: uuid,
+                sayid: sayid
+            })
+
             ctx.response.body = {
                 code: 200,
                 message: '赞同成功'
@@ -98,37 +102,8 @@ const requeAgree = async (ctx) => {
         }
     }
 }
-const agreeSay = async (ctx) => {
-    const { userid } = ctx.userInfo
-    let { sayid } = ctx.request.body
-    parseInt(sayid)
-    console.log(ctx.userInfo, sayid)
-    try {
-        const hasAgreen = await say.agreeSearch(userid, sayid)
-        console.log('has', hasAgreen)
-        if (hasAgreen.length) {
-            await say.abolishAgree(userid, sayid)
-            ctx.response.body = {
-                code: 200,
-                message: '取消成功'
-            }
-        } else {
-            await say.insertAgree(userid, sayid)
-            ctx.response.body = {
-                code: 200,
-                message: '赞同成功'
-            }
-        }
-        // await say.agree(userid, sayid)
 
-    } catch (error) {
-        ctx.response.body = {
-            code: 500,
-            message: error || '错误'
-        }
-    }
-}
 
 module.exports = {
-    requeSay,requeAgree, sayIt, sayList, agreeSay
+    reSayList, requeSay, requeAgree, 
 }

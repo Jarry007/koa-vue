@@ -3,7 +3,7 @@ const {Sequelize, Model} = require('sequelize')
 const md5 = require('../../util/md5')
 
 class User1 extends Model{
-
+    
 }
 
 User1.init({
@@ -13,12 +13,12 @@ User1.init({
         autoIncrement:true,
         comment:'用户id'
     },
-    uuid:{
-        type:Sequelize.UUID,
-        defaultValue:Sequelize.UUIDV4,
-        unique:"user1"
+    // uuid:{
+    //     type:Sequelize.UUID,
+    //     defaultValue:Sequelize.UUIDV4,
+    //     unique:"user1"
 
-    },
+    // },
     name:{
         type:Sequelize.STRING(20),
         allowNull:false,
@@ -38,6 +38,8 @@ User1.init({
     modelName:'user1',
     tableName:'user1'
 })
+
+
 
 
 module.exports = User1

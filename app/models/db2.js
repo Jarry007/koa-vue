@@ -10,6 +10,10 @@ const sequelize = new Sequelize(dbConfig.database,
     define: {
         createdAt: 'create_time',
         updatedAt: 'update_time',
+        charset: 'utf8',
+        dialectOptions: {
+            collate: 'utf8_general_ci'
+        }
     }
 
 }

@@ -4,11 +4,11 @@ const controller = require('../control/say')
 const token = require('../token/token')
 
 
-router.post('/say',token.checkToken,controller.sayIt)
-router.get('/get-list',token.checkToken, controller.sayList)
-router.post('/agree',token.checkToken,controller.agreeSay)
+// router.post('/say',token.checkToken,controller.sayIt)
+// router.get('/get-list',token.checkToken, controller.sayList)
+// router.post('/agree',token.checkToken,controller.agreeSay)
 
-
-router.post('/say2',token.checkToken,controller.requeSay)
-router.post('/agree2',token.checkToken,controller.requeAgree)
+router.get('/get-list',token.checkToken, controller.reSayList)
+router.post('/say',token.checkToken,controller.requeSay)
+router.post('/agree',token.checkToken,controller.requeAgree)
 module.exports = router

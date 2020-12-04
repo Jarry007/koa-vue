@@ -20,7 +20,7 @@ const clearToken = async (ctx, next) => {
             message: '校验成功',
             data: getT_
         }
-        next()
+      await  next()
 
     } catch (error) {
         ctx.body = {
@@ -35,8 +35,7 @@ const clearToken = async (ctx, next) => {
 const setToken = (user) => {
     return jwt.sign({
         user: user.name,
-        userid:user.id,
-        uuid:user.uuid
+        userid:user.id
     },
         secretKey,
         { expiresIn: '24h' }
@@ -62,6 +61,7 @@ const checkToken = async (ctx, next) => {
         await next()
 
     } catch (error) {
+        console.error(error.message)
         ctx.body = {
             code: 500,
             message: '校验失败'

@@ -15,19 +15,19 @@ Relation.init({
         comment:'id'
     },
     userid:{
-        type:Sequelize.UUID,
-        references:{
-            model:user,
-            key:'uuid'
-        }
+       type:Sequelize.INTEGER,
+        // references:{
+        //     model:user,
+        //     key:'uuid'
+        // }
     },
     sayid:{
        
         type:Sequelize.INTEGER,
-        references:{
-            model:list,
-            key:'id'
-        }
+        // references:{
+        //     model:list,
+        //     key:'id'
+        // }
     }
 
 
@@ -36,7 +36,10 @@ Relation.init({
     modelName:'relation1',
     tableName:'relation1'
 })
-
+// user.hasMany(list,{foreignKey:'userId'})
+// list.hasMany(user,{foreignKey:'listId'})
+list.belongsTo(user,{foreignKey:'userId'})
+// user.belongsTo(list,{foreignKey:'listId'})
 user.belongsToMany(list,{through:'relation1'})
 list.belongsToMany(user,{through:'relation1'})
 module.exports = Relation
